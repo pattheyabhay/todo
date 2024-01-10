@@ -86,8 +86,6 @@
 
 
 <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -100,12 +98,14 @@
 <body>
 
     <div>
-        <input id="title" type="text" placeholder="title"><br>
-        <input id="description" type="text" placeholder="description"><br>
-        <button onclick="addTodo()">Add Todo</button>
-    </div>
-    <div id="container"></div>
-
+        <form id="todoForm">
+          <input id="title" type="text" placeholder="Title" required><br>
+          <input id="description" type="text" placeholder="Description" required><br>
+          <button type="submit">Add Todo</button>
+        </form>
+      </div>
+    
+      <div id="container"></div>
     <script>
 
         async function addTodo() {
@@ -130,11 +130,11 @@
         function createChild(title, description, id) {
             const child = document.createElement('div')
 
-            const firstGrandChild = document.createElement('div')
-            firstGrandChild.innerHTML = title
+            const firstGrandChild = document.createElement('input')
+            firstGrandChild.value = title;
 
-            const secondGrandChild = document.createElement('div')
-            secondGrandChild.innerHTML = description
+            const secondGrandChild = document.createElement('input')
+            secondGrandChild.value = description;
 
             const thirdGrandChild = document.createElement('button')
             thirdGrandChild.innerHTML = 'Mark as Done'
@@ -148,33 +148,24 @@
             return child;
         }
 
-        // function updateDomAccToState(state) {
-        //     const parent = document.getElementById('container')
-        //     parent.innerHTML = "";
-        //     for (let i = 0; i < state.length; i++) {
-        //         const child = createChild(state[i].title, state[i].description, state[i]._id);
-        //         parent.appendChild(child);
-        //     }
-        // }
         function updateDomAccToState(state) {
-    const parent = document.getElementById('container');
-    parent.innerHTML = "";
+            const parent = document.getElementById('container');
+            parent.innerHTML = "";
 
-    // Assuming state.todos is an array of todos
-    const todos = state.todos || [];
+            // Assuming state.todos is an array of todos
+            const todos = state.todos || [];
 
-    todos.forEach(todo => {
-        const child = createChild(todo.title, todo.description, todo.id);
-        parent.appendChild(child);
-    });
-}
-
+            todos.forEach(todo => {
+                const child = createChild(todo.title, todo.description, todo.id);
+                parent.appendChild(child);
+            });
+        }
 
         async function fetchData() {
             try {
                 const response = await fetch("http://localhost:3000/todos");
                 const json = await response.json();
-                updateDomAccToState(json.todos);
+                updateDomAccToState(json);
             } catch (error) {
                 console.error(error);
             }
