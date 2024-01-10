@@ -1,0 +1,203 @@
+<!--
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>todo</title>
+</head>
+
+<body>
+
+    <div>
+        <input id="title" type="text" placeholder="title"><br>
+        <input id="description" type="text" placeholder="description"><br>
+        <button onclick="addTodo()">add todo</button>
+    </div>
+    <div id="container"></div>
+   
+    <script>
+
+
+        function createChild(title, description, id) {
+            const child = document.createElement('div')
+
+            const firstGrandChild = document.createElement('div')
+            firstGrandChild.innerHTML = title
+
+            const secondGrandChild = document.createElement('div')
+            secondGrandChild.innerHTML = description
+
+            const thirdGrandChild = document.createElement('button')
+            thirdGrandChild.innerHTML = 'mark as done'
+
+            thirdGrandChild.setAttribute('onclick', `markAsDone(${id})`)
+
+            child.appendChild(firstGrandChild);
+            child.appendChild(secondGrandChild);
+            child.appendChild(thirdGrandChild);
+
+            return child;
+        }
+
+        //State will always be an array
+        //every element of state would have a title, description & ID.
+        //
+        //
+        function updateDomAccToState(state) {
+            const parent = document.getElementById('container')
+            parent.innerHTML = "";
+            for (let i = 0; i < state.length; i++) {
+                const child=createChild(state[i].title, state[i].description,state[i].id);
+                parent.appendChild(child);
+            }
+        }
+
+        // updateDomAccToState([{
+        //     title:"go to gym",
+        //     description:"go to gym at 7-9",
+        //     id: 1
+        //     },{
+        //     title:"go to class",
+        //     description:"go to class at 7-9",
+        //     id: 1
+        //     },{
+        //     title:"go to sleep",
+        //     description:"go to sleep at 7-9",
+        //     id: 1
+        //     }
+        // ]);  //THIS IS VERY BAD WAY OF SENDING DATA IN REAL WORLD DATA COMES FROM BACKEND SERVERS WHICH NEED TO BE RENDERED ON SCREEN
+
+        window.setInterval(async function(){
+            const response = await fetch("http://localhost:3000/todos");
+            const json = await response.json();
+            updateDomAccToState(json.todos)
+        },5000)
+        //sometimes error code may be 502 as server may be down
+
+    </script>
+</body>
+
+</html>
+
+-->
+
+
+
+<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+</head>
+
+<body>
+
+    <div>
+        <input id="title" type="text" placeholder="title"><br>
+        <input id="description" type="text" placeholder="description"><br>
+        <button onclick="addTodo()">Add Todo</button>
+    </div>
+    <div id="container"></div>
+
+    <script>
+
+        async function addTodo() {
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+
+            const response = await fetch("http://localhost:3000/todos", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title, description }),
+            });
+
+            const json = await response.json();
+            console.log(json);
+
+            // Uncomment the line below if you want to refresh the list after adding a new todo
+            // fetchData();
+        }
+
+        function createChild(title, description, id) {
+            const child = document.createElement('div')
+
+            const firstGrandChild = document.createElement('div')
+            firstGrandChild.innerHTML = title
+
+            const secondGrandChild = document.createElement('div')
+            secondGrandChild.innerHTML = description
+
+            const thirdGrandChild = document.createElement('button')
+            thirdGrandChild.innerHTML = 'Mark as Done'
+
+            thirdGrandChild.setAttribute('onclick', `markAsDone(${id})`)
+
+            child.appendChild(firstGrandChild);
+            child.appendChild(secondGrandChild);
+            child.appendChild(thirdGrandChild);
+
+            return child;
+        }
+
+        // function updateDomAccToState(state) {
+        //     const parent = document.getElementById('container')
+        //     parent.innerHTML = "";
+        //     for (let i = 0; i < state.length; i++) {
+        //         const child = createChild(state[i].title, state[i].description, state[i]._id);
+        //         parent.appendChild(child);
+        //     }
+        // }
+        function updateDomAccToState(state) {
+    const parent = document.getElementById('container');
+    parent.innerHTML = "";
+
+    // Assuming state.todos is an array of todos
+    const todos = state.todos || [];
+
+    todos.forEach(todo => {
+        const child = createChild(todo.title, todo.description, todo.id);
+        parent.appendChild(child);
+    });
+}
+
+
+        async function fetchData() {
+            try {
+                const response = await fetch("http://localhost:3000/todos");
+                const json = await response.json();
+                updateDomAccToState(json.todos);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // Initial fetch when the page loads
+        fetchData();
+
+        window.setInterval(fetchData, 5000);
+
+        async function markAsDone(id) {
+            const response = await fetch(`http://localhost:3000/todos/${id}/done`, {
+                method: 'PUT',
+            });
+
+            const json = await response.json();
+            console.log(json);
+
+            // Uncomment the line below if you want to refresh the list after marking a todo as done
+            // fetchData();
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,69 @@
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>todo</title>
+</head>
+<body>
+    <div>
+        <input id="title" type="text" placeholder="title"><br>
+        <input id="description" type="text" placeholder="description"><br>
+        <button onclick="addTodo()">add todo</button>
+    </div>
+    <div id="container"></div>
+    
+    <script>
+        let globalId = 1
+        
+        function markAsDone(todoId) {
+            const parent = document.getElementById(todoId);
+            console.log(parent);
+            parent.children[2].innerHTML='done'
+        }
+
+        function createChild(title, description, id){
+            const child = document.createElement('div')
+            
+            const firstGrandChild = document.createElement('div')
+            firstGrandChild.innerHTML = title
+            
+            const secondGrandChild = document.createElement('div')
+            secondGrandChild.innerHTML = description
+            
+            const thirdGrandChild = document.createElement('button')
+            thirdGrandChild.innerHTML = 'mark as done'
+
+            thirdGrandChild.setAttribute('onclick', `markAsDone(${id})`)
+            
+            child.appendChild(firstGrandChild);
+            child.appendChild(secondGrandChild);
+            child.appendChild(thirdGrandChild);
+            child.setAttribute("id", id);
+            return child;
+        }
+
+        function addTodo(){
+            const title = document.getElementById('title').value
+            const description = document.getElementById('description').value
+            const parent = document.getElementById('container')
+            parent.appendChild(createChild(title, description, globalId++))
+            
+
+            //     document.getElementById('container').innerHTML =originalHTML + `
+        //     <div>${title}</div>
+        //     <div>${description}</div>
+        //     <button onclick ="markDone()" id ="markDonebtn">mark as done</button>
+        //    `
+        }
+
+        // function markDone(){
+        //     document.getElementById('markDonebtn').innerHTML = 'done';
+        // }
+
+    </script>
+
+</body>
+</html>
+-->
